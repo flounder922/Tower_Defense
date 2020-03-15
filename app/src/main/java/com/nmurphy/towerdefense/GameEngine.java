@@ -12,9 +12,10 @@ class GameEngine extends SurfaceView implements Runnable, GameStarter {
     private Thread mThread = null;
     private long mFPS;
 
-    private SoundEngine mSoundEngine;
-
     private GameState mGameState;
+    private SoundEngine mSoundEngine;
+    private HUD mHUD;
+    private Renderer mRenderer;
 
     public GameEngine(Context context, Point size) {
         super(context);
@@ -22,13 +23,13 @@ class GameEngine extends SurfaceView implements Runnable, GameStarter {
         mGameState = new GameState(this, context);
 
         // Decides the version of SoundEngine to use
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mSoundEngine = new SoundEngine(new PostLollipopSoundEngine(context));
-        }
-        else {
+        else
             mSoundEngine = new SoundEngine(new PreLollipopSoundEngine(context));
-        }
 
+        mHUD = new HUD(size);
+        mRenderer = new Renderer(this);
     }
 
     @Override
@@ -43,6 +44,7 @@ class GameEngine extends SurfaceView implements Runnable, GameStarter {
             }
 
             // Draw all the Game Objects
+            mRenderer.draw(mGameState, mHUD);
 
             // Measures the FPS.
             long timeThisFrame = System.currentTimeMillis() - frameStartTime;
