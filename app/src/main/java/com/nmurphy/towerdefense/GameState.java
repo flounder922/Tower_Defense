@@ -2,6 +2,7 @@ package com.nmurphy.towerdefense;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 class GameState {
     private static volatile boolean mThreadRunning = false;
@@ -14,6 +15,7 @@ class GameState {
 
     private int mScore;
     private int mHighScore;
+    private int mBaseLife;
 
     // This is to make a persistent high score.
     private SharedPreferences.Editor mEditor;
@@ -56,9 +58,21 @@ class GameState {
         startDrawing();
     }
 
+    void loseLife(SoundEngine se) {
+        se.strategyPlaySound1();
+        if(mBaseLife == 0) {
+            pause();
+            endGame();
+        }
+    }
+
     private void resume() {
         mGameOver = false;
         mPaused = false;
+    }
+
+    void pause() {
+        mPaused = true;
     }
 
     private void startDrawing() {
@@ -67,5 +81,47 @@ class GameState {
 
     private void stopDrawing() {
         mDrawing = false;
+    }
+
+    int getBaseLife() {
+        return mBaseLife;
+    }
+
+    void increaseScore() {
+        mScore++;
+    }
+
+    int getScore() {
+        return mScore;
+    }
+
+    int getHighScore() {
+        return mHighScore;
+    }
+
+    void startThread() {
+        mThreadRunning = true;
+    }
+
+    void stopEverything() {
+        mPaused = true;
+        mGameOver = true;
+        mThreadRunning = false;
+    }
+
+    boolean getThreadRunning() {
+        return mThreadRunning;
+    }
+
+    boolean getDrawing() {
+        return mDrawing;
+    }
+
+    boolean getPaused() {
+        return mPaused;
+    }
+
+    boolean getGameOver() {
+        return mGameOver;
     }
 }
